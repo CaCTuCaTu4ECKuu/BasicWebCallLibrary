@@ -1,7 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp1.0</TargetFramework>
+    <TargetFrameworks>netstandard1.1</TargetFrameworks>
+    <Version>1.1.1</Version>
+    <Authors>CaCTuCaTu4ECKuu</Authors>
+    <Company>LeMeH</Company>
   </PropertyGroup>
 
 </Project>
