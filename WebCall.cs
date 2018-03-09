@@ -55,28 +55,21 @@ namespace Utils.BasicWebCall
         
         private async Task<WebCallResult> MakeRequestAsync(HttpResponseMessage response, Uri uri)
         {
-            if (response.IsSuccessStatusCode)
+            using (var stream = await response.Content.ReadAsStreamAsync())
             {
-                using (var stream = await response.Content.ReadAsStreamAsync())
+                if (stream == null)
                 {
-                    if (stream == null)
-                    {
-                        throw new Exception("Response is null.");
-                    }
-                    
-                    var cookies = _result.Cookies.Container;
-
-                    _result.SaveCookies(cookies.GetCookies(uri));
-
-                    await _result.SaveResponseAsync(response, stream);
-
-                    return response.StatusCode == HttpStatusCode.Redirect
-                            ? await RedirectToAsync(response.Headers.Location)
-                            : _result;
+                    throw new Exception("Response is null.");
                 }
+
+                await _result.SaveResponseAsync(response, stream);
+                var cookies = _result.Cookies.Container;
+                _result.SaveCookies(cookies.GetCookies(uri));
+
+                return response.StatusCode == HttpStatusCode.Redirect
+                        ? await RedirectToAsync(response.Headers.Location)
+                        : _result;
             }
-            await _result.SaveResponseAsync(response, null);
-            return _result;
         }
 
         private async Task<WebCallResult> RedirectToAsync(Uri uri)
